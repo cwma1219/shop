@@ -29,3 +29,10 @@
 
 - 預計實現功能：
   - Distributed Lock
+
+## Built with
+- Java
+- Spring Boot
+- MySQL
+- Redis
+
