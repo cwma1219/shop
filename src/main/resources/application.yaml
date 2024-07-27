@@ -1,0 +1,28 @@
+spring:
+  datasource:
+    username: root
+    password: 1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/rd?useSSL=false&serverTimezone=UTC
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    show-sql: true
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      lettuce:
+        pool:
+          max-idle: 8
+          min-idle: 2
+          max-wait: 100ms
+server:
+  port: 8081
+logging:
+  level:
+    root: ERROR
+    org.springframework: ERROR
+    com.example: DEBUG
