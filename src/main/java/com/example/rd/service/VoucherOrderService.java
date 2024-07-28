@@ -4,5 +4,5 @@ import com.example.rd.dto.Result;
 
 public interface VoucherOrderService {
 
-    Result seckillVoucher(Long id);
+    Result order(Long id);
 }

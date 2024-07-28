@@ -7,8 +7,10 @@ import com.example.rd.repository.VoucherOrderRepository;
 import com.example.rd.repository.VoucherRepository;
 import com.example.rd.service.VoucherOrderService;
 import com.example.rd.util.IdGenerator;
+import com.example.rd.util.Lock;
 import com.example.rd.util.UserHolder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,9 +28,25 @@ public class VoucherOrderServiceImpl implements VoucherOrderService {
     @Autowired
     IdGenerator idGenerator;
 
+    @Autowired
+    StringRedisTemplate stringRedisTemplate;
+
     @Override
     @Transactional
-    public Result seckillVoucher(Long id) {
+    public Result order(Long id) {
+        Lock lock = new Lock("order:" + UserHolder.getUser().getId(), stringRedisTemplate);
+        if (!lock.tryLock(10)) {
+            //使用Non-blocking 不等待直接回傳
+            return Result.fail("Too many requests");
+        }
+        try {
+            return createOrder(id);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public Result createOrder(Long id) {
         //一人只可購買一個
         int count = voucherOrderRepository.countByVoucherIdAAndUserIdAnd(id, UserHolder.getUser().getId());
         if (count > 0) {
